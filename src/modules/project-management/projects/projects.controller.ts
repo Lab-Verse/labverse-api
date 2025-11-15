@@ -78,6 +78,12 @@ export class ProjectsController {
     files?: Express.Multer.File[],
   ) {
     try {
+      this.logger.log(`Received files: ${files ? files.length : 0}`);
+      this.logger.log(`Body keys: ${Object.keys(body)}`);
+      if (files && files.length > 0) {
+        this.logger.log(`File details: ${files.map(f => `${f.originalname} (${f.size} bytes)`).join(', ')}`);
+      }
+      
       let createProjectDto: CreateProjectDto;
 
       // Manually parse the JSON string from the 'data' field
@@ -107,9 +113,12 @@ export class ProjectsController {
         );
         const imageUrls = await Promise.all(uploadPromises);
         createProjectDto.images = imageUrls;
+        this.logger.log(`Uploaded ${imageUrls.length} images: ${imageUrls.join(', ')}`);
       } else {
         createProjectDto.images = [];
       }
+      
+      this.logger.log(`Creating project with images: ${JSON.stringify(createProjectDto.images)}`);
 
       return await this.projectsService.create(createProjectDto);
     } catch (error) {

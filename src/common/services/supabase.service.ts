@@ -26,6 +26,9 @@ export class SupabaseService {
     folderName: string,
   ): Promise<string> {
     try {
+      // Test connection first
+      await this.testConnection();
+      
       // Validate file exists
       if (!file) {
         throw new BadRequestException('No file provided');
@@ -73,8 +76,12 @@ export class SupabaseService {
           `Bucket: ${this.bucketName}, FileName: ${fileName}`,
           'SupabaseService',
         );
+        SafeLogger.error(
+          `Supabase URL: ${this.configService.get<string>('SUPABASE_URL')}`,
+          'SupabaseService',
+        );
         throw new InternalServerErrorException(
-          `Failed to upload image to Supabase: ${error.message}`,
+          `Failed to upload image to Supabase: ${error.message || 'Unknown error'}`,
         );
       }
 

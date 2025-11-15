@@ -33,7 +33,6 @@ export class ProjectsService {
 
   async create(
     createProjectDto: CreateProjectDto,
-    images?: Express.Multer.File[],
   ): Promise<Project> {
     const queryRunner: QueryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -59,16 +58,7 @@ export class ProjectsService {
         throw new ConflictException('A project with this name already exists');
       }
 
-      let imageUrls: string[] = [];
-      if (images && images.length > 0) {
-        for (const image of images) {
-          const imageUrl = await this.supabaseService.uploadImage(
-            image,
-            'projects',
-          );
-          imageUrls.push(imageUrl);
-        }
-      }
+      // Images are already uploaded and URLs are in createProjectDto.images
 
       const project = this.projectRepository.create({
         ...createProjectDto,
@@ -78,7 +68,7 @@ export class ProjectsService {
         endDate: createProjectDto.endDate
           ? new Date(createProjectDto.endDate)
           : null,
-        images: imageUrls,
+        images: createProjectDto.images || [],
       });
 
       try {
@@ -99,8 +89,15 @@ export class ProjectsService {
 
         return projectWithRelations;
       } catch (dbError) {
-        for (const imageUrl of imageUrls) {
-          await this.supabaseService.deleteImage(imageUrl);
+        // If database save fails, cleanup uploaded images
+        if (createProjectDto.images && createProjectDto.images.length > 0) {
+          for (const imageUrl of createProjectDto.images) {
+            try {
+              await this.supabaseService.deleteImage(imageUrl);
+            } catch (cleanupError) {
+              SafeLogger.error(`Failed to cleanup image: ${imageUrl}`, 'ProjectsService');
+            }
+          }
         }
         throw dbError;
       }

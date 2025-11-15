@@ -5,8 +5,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  ManyToMany,
-  JoinTable,
   JoinColumn,
   OneToMany,
 } from 'typeorm';
@@ -19,7 +17,6 @@ import { Invoice } from '../../../billing/invoices/entities/invoice.entity';
 import { ProjectUpdate } from '../../project-updates/entities/project-update.entity';
 import { TimeEntry } from '../../time-entries/entities/time-entry.entity';
 import { Task } from '../../tasks/entities/task.entity';
-import { User } from './../../../users/entities/user.entity';
 
 @Entity('projects')
 export class Project {
