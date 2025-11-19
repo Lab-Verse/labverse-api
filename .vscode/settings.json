@@ -1,7 +1,7 @@
-{
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "files.eol": "\r\n",
-  "files.insertFinalNewline": true,
-  "nxConsole.nxWorkspacePath": "",
-  "editor.formatOnSave": true
-}
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.eol": "\r\n",
+  "files.insertFinalNewline": true,
+  "nxConsole.nxWorkspacePath": "",
+  "editor.formatOnSave": true
+}
