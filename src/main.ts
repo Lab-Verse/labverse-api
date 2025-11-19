@@ -17,7 +17,7 @@ function getAllowedOrigins() {
   // Add your API/Swagger and frontend domains explicitly
   // (adjust these to your real domains)
   const extra = [
-    'https://adminapi.labverse.org', // API+Swagger origin
+    'https://api.labverse.org', // API+Swagger origin
     'http://localhost:3000', // Local dev
     'https://labverse.org',
     'https://www.labverse.org',
