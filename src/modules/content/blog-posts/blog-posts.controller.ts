@@ -27,16 +27,12 @@ export class BlogPostsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'get all blog posts' })
   findAll() {
     return this.blogPostsService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'get a blog post by id' })
   findOne(@Param('id') id: string) {
     return this.blogPostsService.findOne(id);

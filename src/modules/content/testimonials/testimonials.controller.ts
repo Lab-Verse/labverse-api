@@ -28,16 +28,12 @@ export class TestimonialsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get all testimonials' })
   findAll() {
     return this.testimonialsService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get a specific testimonial by ID' })
   findOne(@Param('id') id: string) {
     return this.testimonialsService.findOne(id);

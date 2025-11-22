@@ -1,0 +1,75 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CreateUsersAndRoles1689774123456 = void 0;
+class CreateUsersAndRoles1689774123456 {
+    constructor() {
+        this.name = 'CreateUsersAndRoles1689774123456';
+    }
+    async up(queryRunner) {
+        await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "pgcrypto";`);
+        await queryRunner.query(`
+
+      CREATE TABLE IF NOT EXISTS roles (
+
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+        name VARCHAR(100) UNIQUE NOT NULL,
+
+        description VARCHAR(255),
+
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+
+      );
+
+    `);
+        await queryRunner.query(`
+
+      CREATE INDEX IF NOT EXISTS idx_roles_name ON roles(name);
+
+    `);
+        await queryRunner.query(`
+
+      CREATE TABLE IF NOT EXISTS users (
+
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+        email VARCHAR(255) UNIQUE NOT NULL,
+
+        password VARCHAR(255) NOT NULL,
+
+        full_name VARCHAR(255) NOT NULL,
+
+        role_id UUID,
+
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+
+        CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE SET NULL
+
+      );
+
+    `);
+        await queryRunner.query(`
+
+      CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+    `);
+        await queryRunner.query(`
+
+      CREATE INDEX IF NOT EXISTS idx_users_role_id ON users(role_id);
+
+    `);
+    }
+    async down(queryRunner) {
+        await queryRunner.query(`DROP INDEX IF EXISTS idx_users_role_id;`);
+        await queryRunner.query(`DROP INDEX IF EXISTS idx_users_email;`);
+        await queryRunner.query(`DROP TABLE IF EXISTS users;`);
+        await queryRunner.query(`DROP INDEX IF EXISTS idx_roles_name;`);
+        await queryRunner.query(`DROP TABLE IF EXISTS roles;`);
+    }
+}
+exports.CreateUsersAndRoles1689774123456 = CreateUsersAndRoles1689774123456;
+//# sourceMappingURL=1689774123456-CreateUsersAndRoles.js.map

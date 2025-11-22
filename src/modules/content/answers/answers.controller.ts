@@ -27,8 +27,6 @@ export class AnswersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Retrieve all answers' })
   findAll() {
     return this.answersService.findAll();

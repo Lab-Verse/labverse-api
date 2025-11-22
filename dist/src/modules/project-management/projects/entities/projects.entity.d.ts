@@ -1,0 +1,30 @@
+import { Client } from '../../../crm/clients/entities/clients.entity';
+import { ProjectStatus } from '../dto/project-status.enum';
+import { ProjectMilestone } from '../../project-milestones/entities/project-milestone.entity';
+import { ProjectMember } from '../../project-members/entities/project-member.entity';
+import { ProjectTechnology } from '../../project-technologies/entities/project-technology.entity';
+import { Invoice } from '../../../billing/invoices/entities/invoice.entity';
+import { ProjectUpdate } from '../../project-updates/entities/project-update.entity';
+import { TimeEntry } from '../../time-entries/entities/time-entry.entity';
+import { Task } from '../../tasks/entities/task.entity';
+export declare class Project {
+    id: string;
+    name: string;
+    description: string;
+    startDate: Date;
+    endDate: Date;
+    status: ProjectStatus;
+    budget: number;
+    images: string[];
+    client: Client;
+    clientId: string;
+    tasks: Task[];
+    timeEntries: TimeEntry[];
+    updates: ProjectUpdate[];
+    milestones: ProjectMilestone[];
+    members: ProjectMember[];
+    projectTechnologies: ProjectTechnology[];
+    invoices: Invoice[];
+    createdAt: Date;
+    updatedAt: Date;
+}

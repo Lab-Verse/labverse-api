@@ -40,16 +40,12 @@ export class CaseStudiesController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'get all case studies' })
   findAll() {
     return this.caseStudiesService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get a specific case study by ID' })
   findOne(@Param('id') id: string) {
     return this.caseStudiesService.findOne(id);

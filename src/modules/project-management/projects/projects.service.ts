@@ -31,9 +31,7 @@ export class ProjectsService {
     private readonly supabaseService: SupabaseService,
   ) {}
 
-  async create(
-    createProjectDto: CreateProjectDto,
-  ): Promise<Project> {
+  async create(createProjectDto: CreateProjectDto): Promise<Project> {
     const queryRunner: QueryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -95,7 +93,10 @@ export class ProjectsService {
             try {
               await this.supabaseService.deleteImage(imageUrl);
             } catch (cleanupError) {
-              SafeLogger.error(`Failed to cleanup image: ${imageUrl}`, 'ProjectsService');
+              SafeLogger.error(
+                `Failed to cleanup image: ${imageUrl}`,
+                'ProjectsService',
+              );
             }
           }
         }

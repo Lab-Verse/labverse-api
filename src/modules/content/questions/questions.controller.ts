@@ -28,8 +28,6 @@ export class QuestionsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get all questions' })
   findAll() {
     return this.questionsService.findAll();

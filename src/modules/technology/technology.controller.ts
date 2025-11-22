@@ -33,7 +33,6 @@ import { validate } from 'class-validator';
 import { RoleEnum } from '../roles/role.enum';
 import { Roles } from 'src/common/decorators/roles.decorator';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Technologies')
 @Controller('technologies')
 export class TechnologiesController {
@@ -41,7 +40,7 @@ export class TechnologiesController {
 
   constructor(private readonly technologiesService: TechnologiesService) {}
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Create a new technology with optional logo upload',
@@ -98,23 +97,19 @@ export class TechnologiesController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Retrieve all technologies' })
   findAll() {
     return this.technologiesService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Retrieve a technology by ID' })
   findOne(@Param('id') id: string) {
     return this.technologiesService.findOne(id);
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Update a technology with optional logo upload' })
   @ApiConsumes('multipart/form-data')
@@ -171,7 +166,7 @@ export class TechnologiesController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Delete a technology' })
   @Roles(RoleEnum.ADMIN)

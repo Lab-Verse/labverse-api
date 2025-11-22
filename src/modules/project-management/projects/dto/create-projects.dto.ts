@@ -15,6 +15,7 @@ import {
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ProjectStatus } from './project-status.enum';
+import { UUID } from 'crypto';
 
 export class CreateProjectDto {
   @ApiProperty({
@@ -85,12 +86,12 @@ export class CreateProjectDto {
   budget?: number;
 
   @ApiPropertyOptional({
-    description: 'UUID of the employee who created the project',
+    description: 'UUID of the client for the project',
     example: '11111111-1111-1111-1111-111111111111',
   })
-  @IsOptional()
-  @IsUUID(4, { message: 'Creator ID must be a valid UUID' })
-  creatorId?: string;
+  @IsNotEmpty({ message: 'Client ID cannot be empty' })
+  @IsUUID(4, { message: 'Client ID must be a valid UUID' })
+  clientId: UUID;
 
   @ApiPropertyOptional({
     description: 'Array of image URLs for the project',

@@ -41,8 +41,6 @@ export class ServicesController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Retrieve all services' })
   @ApiResponse({
     status: HttpStatus.OK,

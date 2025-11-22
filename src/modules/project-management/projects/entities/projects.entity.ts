@@ -76,15 +76,15 @@ export class Project {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  @JoinColumn({ name: 'creator_id' })
+  @JoinColumn({ name: 'client_id' })
   client: Client;
 
   @Column({
     type: 'uuid',
     nullable: true,
-    name: 'creator_id',
+    name: 'client_id',
   })
-  creatorId: string;
+  clientId: string;
 
   @OneToMany(() => Task, (task) => task.project)
   tasks: Task[];
