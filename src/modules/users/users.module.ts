@@ -11,6 +11,7 @@ import { RolePermission } from '../role-permissions/entities/role-permission.ent
 import { SharedModule } from '../shared/shared.module';
 import { TokenUtil } from 'src/common/utils/jwt.util';
 
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -23,7 +24,9 @@ import { TokenUtil } from 'src/common/utils/jwt.util';
     SharedModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
+      signOptions: { expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as any },
+
+
     }),
   ],
   controllers: [UsersController],

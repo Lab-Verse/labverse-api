@@ -11,14 +11,14 @@ export declare class AuthController {
         user: {
             id: string;
             email: string;
-            fullName: string;
             roleId: string;
             role: import("../roles/entities/role.entity").Role;
-            userPermissions: import("../users/entities/user-permission.entity").UserPermission[];
-            permissions: import("../permissions/entities/permission.entity").Permission[];
-            createdClientPlanQuotations: import("../client-plan-quotations/entities/client-plan-quotation.entity").ClientPlanQuotation[];
             createdAt: Date;
+            permissions: import("../permissions/entities/permission.entity").Permission[];
+            userPermissions: import("../users/entities/user-permission.entity").UserPermission[];
             updatedAt: Date;
+            fullName: string;
+            createdClientPlanQuotations: import("../client-plan-quotations/entities/client-plan-quotation.entity").ClientPlanQuotation[];
         };
     }>;
     login(dto: AuthCredentialsDto): Promise<{

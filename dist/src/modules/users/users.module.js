@@ -35,7 +35,7 @@ exports.UsersModule = UsersModule = __decorate([
             shared_module_1.SharedModule,
             jwt_1.JwtModule.register({
                 secret: process.env.JWT_SECRET,
-                signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
+                signOptions: { expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') },
             }),
         ],
         controllers: [users_controller_1.UsersController],
