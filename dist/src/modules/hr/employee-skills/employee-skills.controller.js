@@ -46,7 +46,7 @@ let EmployeeSkillsController = class EmployeeSkillsController {
 exports.EmployeeSkillsController = EmployeeSkillsController;
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new employee skill' }),
     __param(0, (0, common_1.Body)()),
@@ -56,8 +56,6 @@ __decorate([
 ], EmployeeSkillsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Retrieve all employee skills' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -65,7 +63,7 @@ __decorate([
 ], EmployeeSkillsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('employee/:employeeId'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({
         summary: 'Retrieve all employee skills for a specific employee',
@@ -77,7 +75,7 @@ __decorate([
 ], EmployeeSkillsController.prototype, "findByEmployee", null);
 __decorate([
     (0, common_1.Get)(':employeeId/:skillId'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Retrieve a specific employee skill' }),
     __param(0, (0, common_1.Param)('employeeId')),
@@ -88,7 +86,7 @@ __decorate([
 ], EmployeeSkillsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':employeeId/:skillId'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Update a specific employee skill' }),
     __param(0, (0, common_1.Param)('employeeId')),
@@ -100,7 +98,7 @@ __decorate([
 ], EmployeeSkillsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':employeeId/:skillId'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a specific employee skill' }),
     __param(0, (0, common_1.Param)('employeeId')),
@@ -111,7 +109,6 @@ __decorate([
 ], EmployeeSkillsController.prototype, "remove", null);
 exports.EmployeeSkillsController = EmployeeSkillsController = __decorate([
     (0, swagger_1.ApiTags)('Employee Skills'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Controller)('employee-skills'),
     __metadata("design:paramtypes", [employee_skills_service_1.EmployeeSkillsService])
 ], EmployeeSkillsController);

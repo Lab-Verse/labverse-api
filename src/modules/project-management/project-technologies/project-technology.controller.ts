@@ -18,7 +18,6 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { RoleEnum } from '../../roles/role.enum';
 
 @ApiTags('Project Technologies')
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('project-technologies')
 export class ProjectTechnologiesController {
   constructor(
@@ -26,7 +25,7 @@ export class ProjectTechnologiesController {
   ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Create a new project technology association (bulk)',
@@ -37,7 +36,7 @@ export class ProjectTechnologiesController {
   }
 
   @Patch(':projectId/:oldTechnologyId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Update a project technology association' })
   @Roles(RoleEnum.ADMIN, RoleEnum.PROJECT_MANAGER, RoleEnum.DEVELOPER)
@@ -54,15 +53,14 @@ export class ProjectTechnologiesController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
+ 
   @ApiOperation({ summary: 'Retrieve all project technology associations' })
   findAll() {
     return this.projectTechnologiesService.findAll();
   }
 
   @Get(':projectId/:technologyId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Retrieve a project technology association by IDs' })
   findOne(
@@ -73,7 +71,7 @@ export class ProjectTechnologiesController {
   }
 
   @Delete(':projectId/:technologyId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Delete a project technology association by IDs' })
   remove(

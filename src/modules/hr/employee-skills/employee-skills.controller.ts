@@ -16,13 +16,12 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Employee Skills')
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('employee-skills')
 export class EmployeeSkillsController {
   constructor(private readonly employeeSkillsService: EmployeeSkillsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Create a new employee skill' })
   create(@Body() createEmployeeSkillDto: CreateEmployeeSkillDto) {
@@ -30,15 +29,13 @@ export class EmployeeSkillsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Retrieve all employee skills' })
   findAll() {
     return this.employeeSkillsService.findAll();
   }
 
   @Get('employee/:employeeId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Retrieve all employee skills for a specific employee',
@@ -48,7 +45,7 @@ export class EmployeeSkillsController {
   }
 
   @Get(':employeeId/:skillId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Retrieve a specific employee skill' })
   findOne(
@@ -59,7 +56,7 @@ export class EmployeeSkillsController {
   }
 
   @Patch(':employeeId/:skillId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Update a specific employee skill' })
   update(
@@ -75,7 +72,7 @@ export class EmployeeSkillsController {
   }
 
   @Delete(':employeeId/:skillId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Delete a specific employee skill' })
   remove(

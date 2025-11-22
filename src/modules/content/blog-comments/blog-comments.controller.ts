@@ -27,8 +27,6 @@ export class BlogCommentsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Retrieve all blog comments' })
   findAll() {
     return this.blogCommentsService.findAll();

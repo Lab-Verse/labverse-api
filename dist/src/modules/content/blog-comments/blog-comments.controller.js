@@ -52,8 +52,6 @@ __decorate([
 ], BlogCommentsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Retrieve all blog comments' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),

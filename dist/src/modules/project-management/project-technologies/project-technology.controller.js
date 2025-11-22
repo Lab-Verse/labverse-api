@@ -45,7 +45,7 @@ let ProjectTechnologiesController = class ProjectTechnologiesController {
 exports.ProjectTechnologiesController = ProjectTechnologiesController;
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({
         summary: 'Create a new project technology association (bulk)',
@@ -58,7 +58,7 @@ __decorate([
 ], ProjectTechnologiesController.prototype, "create", null);
 __decorate([
     (0, common_1.Patch)(':projectId/:oldTechnologyId'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Update a project technology association' }),
     (0, roles_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN, role_enum_1.RoleEnum.PROJECT_MANAGER, role_enum_1.RoleEnum.DEVELOPER),
@@ -71,8 +71,6 @@ __decorate([
 ], ProjectTechnologiesController.prototype, "update", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Retrieve all project technology associations' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -80,7 +78,7 @@ __decorate([
 ], ProjectTechnologiesController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':projectId/:technologyId'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Retrieve a project technology association by IDs' }),
     __param(0, (0, common_1.Param)('projectId')),
@@ -91,7 +89,7 @@ __decorate([
 ], ProjectTechnologiesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Delete)(':projectId/:technologyId'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a project technology association by IDs' }),
     __param(0, (0, common_1.Param)('projectId')),
@@ -102,7 +100,6 @@ __decorate([
 ], ProjectTechnologiesController.prototype, "remove", null);
 exports.ProjectTechnologiesController = ProjectTechnologiesController = __decorate([
     (0, swagger_1.ApiTags)('Project Technologies'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Controller)('project-technologies'),
     __metadata("design:paramtypes", [project_technology_service_1.ProjectTechnologiesService])
 ], ProjectTechnologiesController);

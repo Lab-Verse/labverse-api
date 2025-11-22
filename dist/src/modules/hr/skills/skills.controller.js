@@ -45,7 +45,7 @@ let SkillsController = class SkillsController {
 exports.SkillsController = SkillsController;
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new skill' }),
     (0, roles_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN),
@@ -56,8 +56,6 @@ __decorate([
 ], SkillsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Retrieve all skills' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -65,7 +63,7 @@ __decorate([
 ], SkillsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Retrieve a specific skill' }),
     __param(0, (0, common_1.Param)('id')),
@@ -75,7 +73,7 @@ __decorate([
 ], SkillsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Update a specific skill' }),
     (0, roles_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN),
@@ -87,7 +85,7 @@ __decorate([
 ], SkillsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a specific skill' }),
     (0, roles_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN),
@@ -98,7 +96,6 @@ __decorate([
 ], SkillsController.prototype, "remove", null);
 exports.SkillsController = SkillsController = __decorate([
     (0, swagger_1.ApiTags)('Skills'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Controller)('skills'),
     __metadata("design:paramtypes", [skills_service_1.SkillsService])
 ], SkillsController);
