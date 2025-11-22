@@ -57,16 +57,16 @@ async function bootstrap() {
   );
 
   const allowed = getAllowedOrigins();
+  console.log('Allowed CORS origins:', allowed);
+  
   app.enableCors({
-    origin: (origin, cb) => {
-      if (!origin) return cb(null, true);
-      if (allowed.includes(origin)) return cb(null, true);
-      return cb(new Error(`CORS blocked for origin: ${origin}`), false);
-    },
+    origin: allowed,
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Authorization',
-    exposedHeaders: 'Authorization',
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+    exposedHeaders: ['Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
 
   // Global validation pipe with strict validation
