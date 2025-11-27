@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsService } from './projects.service';
 import { ProjectsController } from './projects.controller';
 import { Project } from './entities/projects.entity';
-import { Client } from '../../crm/clients/entities/clients.entity';
+import { Client } from '../../crm/client-profile/entities/clients.entity';
 import { SupabaseService } from 'src/common/services/supabase.service';
 import { User } from '../../users/entities/user.entity';
 

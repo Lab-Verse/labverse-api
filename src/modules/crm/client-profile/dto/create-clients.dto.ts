@@ -10,8 +10,16 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateClientDto {
   @ApiProperty({
+    description: 'The user ID that this client profile belongs to (must have client role)',
+    example: 'uuid-string-here',
+  })
+  @IsString()
+  @IsNotEmpty()
+  user_id: string;
+
+  @ApiProperty({
     description: 'The full name of the client',
-    example: 'Acme Corporation',
+    example: 'John Doe',
   })
   @IsString()
   @IsNotEmpty()

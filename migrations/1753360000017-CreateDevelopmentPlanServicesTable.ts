@@ -45,33 +45,34 @@ export class CreateDevelopmentPlanServicesTable1753360000017
       true,
     );
 
-    await queryRunner.createForeignKey(
-      'development_plan_services',
+    // Check if foreign keys already exist before creating them
+    const table = await queryRunner.getTable('development_plan_services');
+    
+    const existingPlanFK = table.foreignKeys.find(fk => fk.columnNames.includes('plan_id'));
+    if (!existingPlanFK) {
+      await queryRunner.createForeignKey(
+        'development_plan_services',
+        new TableForeignKey({
+          columnNames: ['plan_id'],
+          referencedColumnNames: ['id'],
+          referencedTableName: 'development_plans',
+          onDelete: 'CASCADE',
+        }),
+      );
+    }
 
-      new TableForeignKey({
-        columnNames: ['plan_id'],
-
-        referencedColumnNames: ['id'],
-
-        referencedTableName: 'development_plans',
-
-        onDelete: 'CASCADE',
-      }),
-    );
-
-    await queryRunner.createForeignKey(
-      'development_plan_services',
-
-      new TableForeignKey({
-        columnNames: ['service_id'],
-
-        referencedColumnNames: ['id'],
-
-        referencedTableName: 'services',
-
-        onDelete: 'CASCADE',
-      }),
-    );
+    const existingServiceFK = table.foreignKeys.find(fk => fk.columnNames.includes('service_id'));
+    if (!existingServiceFK) {
+      await queryRunner.createForeignKey(
+        'development_plan_services',
+        new TableForeignKey({
+          columnNames: ['service_id'],
+          referencedColumnNames: ['id'],
+          referencedTableName: 'services',
+          onDelete: 'CASCADE',
+        }),
+      );
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

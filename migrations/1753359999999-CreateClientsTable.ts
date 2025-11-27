@@ -1,119 +1,26 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateClientsTable1753359999999 implements MigrationInterface {
   name = 'CreateClientsTable1753359999999';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.createTable(
-      new Table({
-        name: 'clients',
-
-        columns: [
-          // In your CreateClientsTable migration, change the id column to:
-
-          {
-            name: 'id',
-
-            type: 'uuid',
-
-            isPrimary: true,
-
-            default: 'gen_random_uuid()',
-          },
-
-          {
-            name: 'profile_photo',
-
-            type: 'varchar',
-
-            length: '255',
-
-            isNullable: true,
-          },
-
-          {
-            name: 'name',
-
-            type: 'varchar',
-
-            length: '255',
-
-            isNullable: false,
-          },
-
-          {
-            name: 'email',
-
-            type: 'varchar',
-
-            length: '255',
-
-            isNullable: true,
-
-            isUnique: true,
-          },
-
-          {
-            name: 'phone',
-
-            type: 'varchar',
-
-            length: '50',
-
-            isNullable: true,
-          },
-
-          {
-            name: 'company',
-
-            type: 'varchar',
-
-            length: '100',
-
-            isNullable: true,
-          },
-
-          {
-            name: 'address',
-
-            type: 'varchar',
-
-            length: '255',
-
-            isNullable: true,
-          },
-
-          {
-            name: 'website',
-
-            type: 'varchar',
-
-            length: '255',
-
-            isNullable: true,
-          },
-
-          {
-            name: 'created_at',
-
-            type: 'timestamp',
-
-            default: 'now()',
-          },
-
-          {
-            name: 'updated_at',
-
-            type: 'timestamp',
-
-            default: 'now()',
-          },
-        ],
-      }),
-    );
+    await queryRunner.query(`
+      CREATE TABLE IF NOT EXISTS client_profile (
+        user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        profile_photo VARCHAR(255),
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE,
+        phone VARCHAR(50),
+        company VARCHAR(100),
+        address VARCHAR(255),
+        website VARCHAR(255),
+        created_at TIMESTAMP DEFAULT now(),
+        updated_at TIMESTAMP DEFAULT now()
+      );
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('clients');
+    await queryRunner.query(`DROP TABLE IF EXISTS client_profile;`);
   }
 }

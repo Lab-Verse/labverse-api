@@ -86,12 +86,12 @@ export class CreateProjectDto {
   budget?: number;
 
   @ApiPropertyOptional({
-    description: 'UUID of the client for the project',
+    description: 'UUID of the client user for the project (references user_id from client_profile)',
     example: '11111111-1111-1111-1111-111111111111',
   })
-  @IsNotEmpty({ message: 'Client ID cannot be empty' })
+  @IsOptional()
   @IsUUID(4, { message: 'Client ID must be a valid UUID' })
-  clientId: UUID;
+  clientId?: UUID;
 
   @ApiPropertyOptional({
     description: 'Array of image URLs for the project',

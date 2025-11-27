@@ -39,7 +39,28 @@ class CreateProjectWithFilesDto {
   })
   files?: any[];
 
-  @ApiProperty({ type: 'string', description: 'JSON string of project data' })
+  @ApiProperty({ 
+    type: 'string', 
+    description: 'JSON string of project data (clientId should reference user_id from client_profile)',
+    example: '{"name":"Website Project","description":"A new website","clientId":"uuid-of-client-user"}'
+  })
+  data: string;
+}
+
+class UpdateProjectWithFilesDto {
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    required: false,
+    isArray: true,
+  })
+  files?: any[];
+
+  @ApiProperty({ 
+    type: 'string', 
+    description: 'JSON string of project update data',
+    example: '{"name":"Updated Project Name","description":"Updated description"}'
+  })
   data: string;
 }
 
@@ -159,14 +180,71 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a project' })
+  @ApiOperation({ summary: 'Update a project with optional image uploads' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: UpdateProjectWithFilesDto,
+    description: 'Project update data and optional image files',
+  })
   @ApiResponse({ status: 200, description: 'Project updated successfully' })
   @ApiResponse({ status: 404, description: 'Project not found' })
+  @UseInterceptors(FilesInterceptor('files', 10))
   async update(
     @Param('id') id: string,
-    @Body() updateProjectDto: UpdateProjectDto,
+    @Body() body: any,
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 2 * 1024 * 1024 }), // 2MB
+          new FileTypeValidator({ fileType: /^image\/(jpeg|png|webp|gif)$/ }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    files?: Express.Multer.File[],
   ) {
     try {
+      this.logger.log(`Updating project ${id} with ${files ? files.length : 0} files`);
+
+      let updateProjectDto: UpdateProjectDto;
+
+      // Parse the JSON string from the 'data' field
+      if (body.data) {
+        updateProjectDto = plainToClass(
+          UpdateProjectDto,
+          JSON.parse(body.data),
+        );
+      } else {
+        // Fallback for non-multipart requests
+        updateProjectDto = plainToClass(UpdateProjectDto, body);
+      }
+
+      // Validate the DTO
+      const errors = await validate(updateProjectDto);
+      if (errors.length > 0) {
+        const messages = errors.flatMap((error) =>
+          Object.values(error.constraints),
+        );
+        throw new BadRequestException(messages);
+      }
+
+      if (files && files.length > 0) {
+        // Upload new files
+        const uploadPromises = files.map((file) =>
+          this.supabaseService.uploadImage(file, 'projects'),
+        );
+        const newImageUrls = await Promise.all(uploadPromises);
+        
+        // Get existing project to merge images
+        const existingProject = await this.projectsService.findOne(id);
+        const existingImages = existingProject.images || [];
+        
+        updateProjectDto.images = [...existingImages, ...newImageUrls];
+        this.logger.log(
+          `Added ${newImageUrls.length} new images to project ${id}`,
+        );
+      }
+
       return await this.projectsService.update(id, updateProjectDto);
     } catch (error) {
       this.logger.error(`Failed to update project ${id}: ${error.message}`);

@@ -89,7 +89,7 @@ export class ClientsService {
     data: Client[];
   }> {
     const clients = await this.clientsRepository.find({
-      order: { created_at: 'DESC' },
+      order: { createdAt: 'DESC' },
     });
     return ValidationUtil.createSuccessResponse(
       'Clients retrieved successfully',
@@ -102,7 +102,7 @@ export class ClientsService {
   ): Promise<{ success: boolean; message: string; data: Client }> {
     ValidationUtil.validateObjectId(id, 'clientId');
 
-    const client = await this.clientsRepository.findOneBy({ id });
+    const client = await this.clientsRepository.findOneBy({ user_id: id });
     if (!client) {
       throw new NotFoundException('Client not found');
     }
@@ -129,7 +129,7 @@ export class ClientsService {
       ValidationUtil.validateString(dto.address, 'address', 5, 255);
     if (dto.website) ValidationUtil.validateUrl(dto.website, 'website');
 
-    const client = await this.clientsRepository.findOneBy({ id });
+    const client = await this.clientsRepository.findOneBy({ user_id: id });
     if (!client) {
       throw new NotFoundException('Client not found');
     }
@@ -195,7 +195,7 @@ export class ClientsService {
   async remove(id: string): Promise<{ success: boolean; message: string }> {
     ValidationUtil.validateObjectId(id, 'clientId');
 
-    const client = await this.clientsRepository.findOneBy({ id });
+    const client = await this.clientsRepository.findOneBy({ user_id: id });
     if (!client) {
       throw new NotFoundException('Client not found');
     }

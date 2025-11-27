@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsService } from '../../../../src/modules/project-management/projects/projects.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '../../../../src/modules/project-management/projects/entities/projects.entity';
-import { Client } from '../../../../src/modules/crm/clients/entities/clients.entity';
+import { Client } from '../../../../src/modules/crm/client-profile/entities/clients.entity';
 import { mockRepository } from '../../../utils/test-helpers';
 
 describe('ProjectsService', () => {

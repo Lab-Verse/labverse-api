@@ -1,12 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ClientPlanQuotation } from '../../../client-plan-quotations/entities/client-plan-quotation.entity';
 import { Invoice } from '../../../billing/invoices/entities/invoice.entity';
 import { Project } from '../../../project-management/projects/entities/projects.entity';
 
-@Entity('clients')
+@Entity('client_profile')
 export class Client {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryColumn('uuid')
+  user_id: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true, name: 'profile_photo' })
+  profilePhoto: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   name: string;
@@ -14,7 +17,7 @@ export class Client {
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 20, nullable: true })
+  @Column({ type: 'varchar', length: 50, nullable: true })
   phone: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
@@ -26,23 +29,11 @@ export class Client {
   @Column({ type: 'varchar', length: 255, nullable: true })
   website: string;
 
-  @Column({
-    type: 'varchar',
-    length: 255,
-    nullable: true,
-    name: 'profile_photo',
-  })
-  profilePhoto: string;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
-
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-  })
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   @OneToMany(() => ClientPlanQuotation, (quotation) => quotation.client)
   clientPlanQuotations: ClientPlanQuotation[];

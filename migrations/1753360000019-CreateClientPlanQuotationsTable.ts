@@ -125,9 +125,9 @@ export class CreateClientPlanQuotationsTable1753360000019
       new TableForeignKey({
         columnNames: ['client_id'],
 
-        referencedColumnNames: ['id'],
+        referencedColumnNames: ['user_id'],
 
-        referencedTableName: 'clients', // OR 'users' table if clients are just users
+        referencedTableName: 'client_profile',
 
         onDelete: 'CASCADE', // If client is deleted, delete their quotations
       }),

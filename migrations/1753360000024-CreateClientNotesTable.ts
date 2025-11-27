@@ -75,9 +75,9 @@ export class CreateClientNotesTable1753360000024 implements MigrationInterface {
       new TableForeignKey({
         columnNames: ['client_id'],
 
-        referencedColumnNames: ['id'],
+        referencedColumnNames: ['user_id'],
 
-        referencedTableName: 'clients', // Assumes a 'clients' table exists
+        referencedTableName: 'client_profile', // References client_profile table
 
         onDelete: 'CASCADE',
       }),

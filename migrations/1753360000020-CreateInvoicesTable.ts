@@ -131,9 +131,9 @@ export class CreateInvoicesTable1753360000020 implements MigrationInterface {
       new TableForeignKey({
         columnNames: ['client_id'],
 
-        referencedColumnNames: ['id'],
+        referencedColumnNames: ['user_id'],
 
-        referencedTableName: 'clients',
+        referencedTableName: 'client_profile',
 
         onDelete: 'CASCADE',
       }),

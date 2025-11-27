@@ -11,7 +11,7 @@ import { ClientPlanQuotation } from '../../../client-plan-quotations/entities/cl
 import { InvoiceStatus } from '../enums/invoice-status.enum';
 import { InvoiceItem } from '../../invoice-items/entities/invoice-item.entity';
 import { Payment } from '../../payments/entities/payment.entity';
-import { Client } from '../../../crm/clients/entities/clients.entity';
+import { Client } from '../../../crm/client-profile/entities/clients.entity';
 
 @Entity('invoices')
 export class Invoice {

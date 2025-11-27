@@ -22,7 +22,7 @@ export class CreateProjects1753360000004 implements MigrationInterface {
 
         budget NUMERIC(15, 2),
 
-        creator_id UUID,
+        client_id UUID,
 
         images TEXT[],
 
@@ -30,7 +30,7 @@ export class CreateProjects1753360000004 implements MigrationInterface {
 
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-        CONSTRAINT fk_projects_creator FOREIGN KEY (creator_id) REFERENCES clients(id) ON DELETE SET NULL
+        CONSTRAINT fk_projects_client FOREIGN KEY (client_id) REFERENCES client_profile(user_id) ON DELETE SET NULL
 
       );
 
@@ -50,13 +50,13 @@ export class CreateProjects1753360000004 implements MigrationInterface {
 
     await queryRunner.query(`
 
-      CREATE INDEX IF NOT EXISTS idx_projects_creator_id ON projects(creator_id);
+      CREATE INDEX IF NOT EXISTS idx_projects_client_id ON projects(client_id);
 
     `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_projects_creator_id;`);
+    await queryRunner.query(`DROP INDEX IF EXISTS idx_projects_client_id;`);
 
     await queryRunner.query(`DROP INDEX IF EXISTS idx_projects_status;`);
 

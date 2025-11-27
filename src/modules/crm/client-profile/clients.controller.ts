@@ -39,22 +39,23 @@ export class ClientsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new client with optional profile photo' })
+  @ApiOperation({ summary: 'Create a new client profile with optional profile photo' })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('profile_photo'))
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
-        name: { type: 'string', example: 'Acme Corporation' },
-        email: { type: 'string', example: 'contact@acmecorp.com' },
+        user_id: { type: 'string', example: 'uuid-string-here', description: 'User ID with client role' },
+        name: { type: 'string', example: 'John Doe' },
+        email: { type: 'string', example: 'john@example.com' },
         phone: { type: 'string', example: '+1-555-123-4567' },
-        company: { type: 'string', example: 'Acme Corp' },
+        company: { type: 'string', example: 'ABC Corp' },
         address: { type: 'string', example: '123 Main St, City' },
-        website: { type: 'string', example: 'https://acme.com' },
+        website: { type: 'string', example: 'https://example.com' },
         profile_photo: { type: 'string', format: 'binary' },
       },
-      required: ['name'],
+      required: ['user_id', 'name'],
     },
   })
   async create(
@@ -76,7 +77,7 @@ export class ClientsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Retrieve all clients' })
+  @ApiOperation({ summary: 'Retrieve all client profiles' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully retrieved all clients.',
@@ -88,7 +89,7 @@ export class ClientsController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Retrieve a client by ID' })
+  @ApiOperation({ summary: 'Retrieve a client profile by user ID' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Client found.',
@@ -104,7 +105,7 @@ export class ClientsController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Update an existing client' })
+  @ApiOperation({ summary: 'Update an existing client profile' })
   @ApiConsumes('multipart/form-data') // 👈 required for file upload
   @ApiBody({
     schema: {
@@ -141,7 +142,7 @@ export class ClientsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a client' })
+  @ApiOperation({ summary: 'Delete a client profile' })
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
     description: 'The client has been successfully deleted.',

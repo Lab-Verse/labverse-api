@@ -6,7 +6,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Client } from '../../crm/clients/entities/clients.entity';
+import { Client } from '../../crm/client-profile/entities/clients.entity';
 import { DevelopmentPlan } from '../../development/development-plans/entities/development-plan.entity';
 import { User } from '../../users/entities/user.entity'; // Assuming users module exists
 import { ClientPlanQuotationStatus } from '../enums/client-plan-quotation-status.enum';

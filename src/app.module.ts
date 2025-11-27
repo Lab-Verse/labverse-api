@@ -32,7 +32,7 @@ import { ProjectUpdatesModule } from './modules/project-management/project-updat
 import { TaskCommentModule } from './modules/project-management/tasks/task-comments.module';
 import { TaskModule } from './modules/project-management/tasks/tasks.module';
 import { TimeEntryModule } from './modules/project-management/time-entries/time-entries.module';
-import { ClientsModule } from './modules/crm/clients/clients.module';
+import { ClientsModule } from './modules/crm/client-profile/clients.module';
 import { ClientApprovalsModule } from './modules/crm/client-approvals/client-approvals.module';
 import { SupportTicketsModule } from './modules/support-tickets/support-tickets.module';
 import { MessagingModule } from './modules/messaging/messaging.module';

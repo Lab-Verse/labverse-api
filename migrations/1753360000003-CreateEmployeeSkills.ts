@@ -30,23 +30,26 @@ export class CreateEmployeeSkills1753360000003 implements MigrationInterface {
 
     `);
 
-    await queryRunner.query(`
-
-      CREATE INDEX IF NOT EXISTS idx_employee_skills_profile_id ON employee_skills(employee_profile_id);
-
-    `);
-
-    await queryRunner.query(`
-
-      CREATE INDEX IF NOT EXISTS idx_employee_skills_skill_id ON employee_skills(skill_id);
-
-    `);
-
-    await queryRunner.query(`
-
-      CREATE INDEX IF NOT EXISTS idx_employee_skills_proficiency_level ON employee_skills(proficiency_level);
-
-    `);
+    // Check if table exists and has the expected columns before creating indexes
+    const tableExists = await queryRunner.hasTable('employee_skills');
+    if (tableExists) {
+      const table = await queryRunner.getTable('employee_skills');
+      const hasEmployeeProfileId = table.columns.find(col => col.name === 'employee_profile_id');
+      
+      if (hasEmployeeProfileId) {
+        await queryRunner.query(`
+          CREATE INDEX IF NOT EXISTS idx_employee_skills_profile_id ON employee_skills(employee_profile_id);
+        `);
+        
+        await queryRunner.query(`
+          CREATE INDEX IF NOT EXISTS idx_employee_skills_skill_id ON employee_skills(skill_id);
+        `);
+        
+        await queryRunner.query(`
+          CREATE INDEX IF NOT EXISTS idx_employee_skills_proficiency_level ON employee_skills(proficiency_level);
+        `);
+      }
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

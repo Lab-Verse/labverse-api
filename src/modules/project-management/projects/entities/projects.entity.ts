@@ -8,7 +8,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Client } from '../../../crm/clients/entities/clients.entity';
+import { Client } from '../../../crm/client-profile/entities/clients.entity';
 import { ProjectStatus } from '../dto/project-status.enum';
 import { ProjectMilestone } from '../../project-milestones/entities/project-milestone.entity';
 import { ProjectMember } from '../../project-members/entities/project-member.entity';
@@ -71,6 +71,19 @@ export class Project {
   })
   images: string[];
 
+  @Column({
+    type: 'uuid',
+    nullable: true,
+    name: 'client_id',
+  })
+  clientId: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
   // Relations
   @ManyToOne(() => Client, (client) => client.projects, {
     onDelete: 'SET NULL',
@@ -78,13 +91,6 @@ export class Project {
   })
   @JoinColumn({ name: 'client_id' })
   client: Client;
-
-  @Column({
-    type: 'uuid',
-    nullable: true,
-    name: 'client_id',
-  })
-  clientId: string;
 
   @OneToMany(() => Task, (task) => task.project)
   tasks: Task[];
@@ -106,10 +112,4 @@ export class Project {
 
   @OneToMany(() => Invoice, (invoice) => invoice.project)
   invoices: Invoice[];
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

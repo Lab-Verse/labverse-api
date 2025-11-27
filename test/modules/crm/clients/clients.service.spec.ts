@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ClientsService } from '../../../../src/modules/crm/clients/clients.service';
+import { ClientsService } from '../../../../src/modules/crm/client-profile/clients.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Client } from '../../../../src/modules/crm/clients/entities/clients.entity';
+import { Client } from '../../../../src/modules/crm/client-profile/entities/clients.entity';
 import { mockRepository } from '../../../utils/test-helpers';
 
 describe('ClientsService', () => {
