@@ -7,7 +7,7 @@ export class UpdateEmployeeProfileDto extends PartialType(
 ) {
   @ApiPropertyOptional({
     description: "URL of the employee's profile image",
-    example: 'https://supabase-bucket.com/employee-profiles/image.png',
+    example: 'https://labverse.org/employee-profiles/image.png',
     maxLength: 2048,
   })
   @IsOptional()

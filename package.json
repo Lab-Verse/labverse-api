@@ -21,7 +21,8 @@
     "migration:show": "npm run typeorm -- migration:show",
     "seed": "ts-node ./seeds/seed.ts",
     "seed:permissions": "ts-node seeds/permissions-seed.ts",
-    "seed:all": "npm run seed && npm run seed:permissions",
+    "seed:case-studies": "ts-node seeds/case-studies-seed.ts",
+    "seed:all": "npm run seed && npm run seed:permissions && npm run seed:case-studies",
     "db:reset": "npm run migration:revert && npm run migration:run && npm run seed",
     "test": "jest",
     "test:modules": "jest --config ./test/jest.config.js",
@@ -30,9 +31,12 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "dev:setup": "npm install && npm run migration:run && npm run seed",
-    "check:all": "npm run lint:check && npm run test && npm run build"
+    "check:all": "npm run lint:check && npm run test && npm run build",
+    "test:routes": "ts-node scripts/test-routes.ts",
+    "test:routes:wait": "timeout /t 10 && npm run test:routes"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.946.0",
     "@nestjs/common": "^11.1.9",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.9",
@@ -45,7 +49,6 @@
     "@nestjs/throttler": "^6.4.0",
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.1.9",
-    "@supabase/supabase-js": "^2.84.0",
     "bcryptjs": "^3.0.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",

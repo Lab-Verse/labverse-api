@@ -2,12 +2,14 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Client } from './entities/clients.entity';
 import { CreateClientDto } from './dto/create-clients.dto';
 import { UpdateClientDto } from './dto/update-clients.dto';
+import { User } from '../../users/entities/user.entity';
 import { ValidationUtil } from '../../../common/utils/validation.util';
 import { SafeLogger } from '../../../common/utils/logger.util';
 import { SupabaseService } from 'src/common/services/supabase.service';
@@ -32,6 +34,26 @@ export class ClientsService {
     if (dto.address)
       ValidationUtil.validateString(dto.address, 'address', 5, 255);
     if (dto.website) ValidationUtil.validateUrl(dto.website, 'website');
+
+    // Validate user exists and has client role
+    const user = await this.clientsRepository.manager.findOne(User, {
+      where: { id: dto.user_id },
+      relations: ['role'],
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${dto.user_id} not found`);
+    }
+    if (!user.role || user.role.name.toLowerCase() !== 'client') {
+      throw new BadRequestException('User must have client role to create client profile');
+    }
+
+    // Check if client profile already exists for this user
+    const existingClientProfile = await this.clientsRepository.findOne({
+      where: { user_id: dto.user_id },
+    });
+    if (existingClientProfile) {
+      throw new ConflictException('Client profile already exists for this user');
+    }
 
     if (dto.email) {
       const existingClient = await this.clientsRepository.findOne({
@@ -200,7 +222,7 @@ export class ClientsService {
       throw new NotFoundException('Client not found');
     }
 
-    // ✅ Delete from Supabase if profile photo exists
+    // ✅ Delete from Cloudflare R2 if profile photo exists
     if (client.profilePhoto) {
       await this.supabaseService.deleteImage(client.profilePhoto);
     }

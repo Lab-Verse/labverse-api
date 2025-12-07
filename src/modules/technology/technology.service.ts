@@ -131,9 +131,23 @@ export class TechnologiesService {
 
   async remove(id: string): Promise<void> {
     const validId = SecurityUtil.validateId(id);
+    
+    // Get the technology to check for logo before deletion
+    const technology = await this.findOne(id);
+    
     const result = await this.technologyRepository.delete(validId);
     if (result.affected === 0) {
       throw new NotFoundException(`Technology with ID "${id}" not found.`);
+    }
+
+    // Delete logo from Cloudflare R2 after successful DB deletion
+    if (technology.logo) {
+      try {
+        await this.supabaseService.deleteImage(technology.logo);
+      } catch (cleanupError) {
+        // Log error but don't fail the deletion
+        console.error(`Failed to delete logo: ${technology.logo}`, cleanupError);
+      }
     }
   }
 }

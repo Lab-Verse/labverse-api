@@ -156,6 +156,7 @@ export class EmployeeProfilesService {
   async update(
     id: string,
     updateEmployeeProfileDto: UpdateEmployeeProfileDto,
+    file?: Express.Multer.File,
   ): Promise<ServiceResponse<EmployeeProfile>> {
     try {
       const employeeProfile = await this.employeeProfileRepository.findOne({
@@ -191,20 +192,53 @@ export class EmployeeProfilesService {
         }
       }
 
-      Object.assign(employeeProfile, updateEmployeeProfileDto);
-      const updatedProfile =
-        await this.employeeProfileRepository.save(employeeProfile);
+      let imageUrl: string | undefined;
+      let oldImageUrl: string | undefined;
 
-      SafeLogger.log(
-        `Employee profile updated: ${id}`,
-        'EmployeeProfilesService',
-      );
-      return {
-        success: true,
-        message: 'Employee profile updated successfully',
-        data: updatedProfile,
-        statusCode: HttpStatus.OK,
-      };
+      if (file) {
+        oldImageUrl = employeeProfile.profileImage;
+        imageUrl = await this.supabaseService.uploadImage(
+          file,
+          'employee-profiles',
+        );
+      }
+
+      try {
+        Object.assign(employeeProfile, {
+          ...updateEmployeeProfileDto,
+          profileImage: imageUrl ?? employeeProfile.profileImage,
+        });
+        const updatedProfile =
+          await this.employeeProfileRepository.save(employeeProfile);
+
+        // Delete old image after successful update
+        if (oldImageUrl && imageUrl) {
+          try {
+            await this.supabaseService.deleteImage(oldImageUrl);
+          } catch (cleanupError) {
+            SafeLogger.error(
+              `Failed to delete old image: ${oldImageUrl}`,
+              'EmployeeProfilesService',
+            );
+          }
+        }
+
+        SafeLogger.log(
+          `Employee profile updated: ${id}`,
+          'EmployeeProfilesService',
+        );
+        return {
+          success: true,
+          message: 'Employee profile updated successfully',
+          data: updatedProfile,
+          statusCode: HttpStatus.OK,
+        };
+      } catch (error) {
+        if (imageUrl) {
+          await this.supabaseService.deleteImage(imageUrl);
+        }
+        throw error;
+      }
     } catch (error) {
       this.handleServiceError(error, `Failed to update employee profile ${id}`);
     }

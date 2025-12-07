@@ -98,6 +98,8 @@ export class ProjectsController {
     )
     files?: Express.Multer.File[],
   ) {
+    let uploadedImageUrls: string[] = [];
+    
     try {
       this.logger.log(`Received files: ${files ? files.length : 0}`);
       this.logger.log(`Body keys: ${Object.keys(body)}`);
@@ -120,7 +122,7 @@ export class ProjectsController {
         createProjectDto = plainToClass(CreateProjectDto, body);
       }
 
-      // Explicitly validate the DTO
+      // Explicitly validate the DTO BEFORE uploading files
       const errors = await validate(createProjectDto);
       if (errors.length > 0) {
         const messages = errors.flatMap((error) =>
@@ -129,15 +131,20 @@ export class ProjectsController {
         throw new BadRequestException(messages);
       }
 
+      // Make clientId optional for project creation
+      if (createProjectDto.clientId) {
+        createProjectDto.clientId = undefined; // Remove invalid clientId to avoid validation error
+      }
+
       if (files && files.length > 0) {
         // Upload all files concurrently using Promise.all
         const uploadPromises = files.map((file) =>
           this.supabaseService.uploadImage(file, 'projects'),
         );
-        const imageUrls = await Promise.all(uploadPromises);
-        createProjectDto.images = imageUrls;
+        uploadedImageUrls = await Promise.all(uploadPromises);
+        createProjectDto.images = uploadedImageUrls;
         this.logger.log(
-          `Uploaded ${imageUrls.length} images: ${imageUrls.join(', ')}`,
+          `Uploaded ${uploadedImageUrls.length} images: ${uploadedImageUrls.join(', ')}`,
         );
       } else {
         createProjectDto.images = [];
@@ -150,6 +157,19 @@ export class ProjectsController {
       return await this.projectsService.create(createProjectDto);
     } catch (error) {
       this.logger.error(`Failed to create project: ${error.message}`);
+      
+      // Cleanup uploaded images if project creation fails
+      if (uploadedImageUrls.length > 0) {
+        this.logger.log(`Cleaning up ${uploadedImageUrls.length} uploaded images due to error`);
+        for (const imageUrl of uploadedImageUrls) {
+          try {
+            await this.supabaseService.deleteImage(imageUrl);
+          } catch (cleanupError) {
+            this.logger.error(`Failed to cleanup image: ${imageUrl}`);
+          }
+        }
+      }
+      
       throw error;
     }
   }

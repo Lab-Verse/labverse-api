@@ -56,6 +56,16 @@ export class ProjectsService {
         throw new ConflictException('A project with this name already exists');
       }
 
+      // Validate client exists if clientId is provided (skip validation for now)
+      // if (createProjectDto.clientId) {
+      //   const client = await this.clientRepository.findOne({
+      //     where: { user_id: createProjectDto.clientId },
+      //   });
+      //   if (!client) {
+      //     throw new NotFoundException(`User with ID ${createProjectDto.clientId} not found`);
+      //   }
+      // }
+
       // Images are already uploaded and URLs are in createProjectDto.images
 
       const project = this.projectRepository.create({
@@ -104,6 +114,22 @@ export class ProjectsService {
       }
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      
+      // Cleanup uploaded images if project creation fails
+      if (createProjectDto.images && createProjectDto.images.length > 0) {
+        SafeLogger.log(`Cleaning up ${createProjectDto.images.length} images due to service error`);
+        for (const imageUrl of createProjectDto.images) {
+          try {
+            await this.supabaseService.deleteImage(imageUrl);
+          } catch (cleanupError) {
+            SafeLogger.error(
+              `Failed to cleanup image: ${imageUrl}`,
+              'ProjectsService',
+            );
+          }
+        }
+      }
+      
       SafeLogger.error(
         `Failed to create project: ${error.message}`,
         'ProjectsService',
@@ -111,7 +137,8 @@ export class ProjectsService {
 
       if (
         error instanceof BadRequestException ||
-        error instanceof ConflictException
+        error instanceof ConflictException ||
+        error instanceof NotFoundException
       ) {
         throw error;
       }
@@ -230,6 +257,16 @@ export class ProjectsService {
         }
       }
 
+      // Handle image updates - if new images are provided, they replace old ones
+      let imagesToDelete: string[] = [];
+      if (updateProjectDto.images !== undefined) {
+        const oldImages = existingProject.images || [];
+        const newImages = updateProjectDto.images || [];
+        
+        // Find images that are being removed
+        imagesToDelete = oldImages.filter(oldImg => !newImages.includes(oldImg));
+      }
+
       // Prepare update data
       const updateData = {
         ...updateProjectDto,
@@ -243,6 +280,21 @@ export class ProjectsService {
 
       // Update the project
       await queryRunner.manager.update(Project, id, updateData);
+
+      // Delete removed images from Cloudflare R2 after successful DB update
+      if (imagesToDelete.length > 0) {
+        for (const imageUrl of imagesToDelete) {
+          try {
+            await this.supabaseService.deleteImage(imageUrl);
+            SafeLogger.log(`Deleted image: ${imageUrl}`, 'ProjectsService');
+          } catch (cleanupError) {
+            SafeLogger.error(
+              `Failed to delete image: ${imageUrl} - ${cleanupError.message}`,
+              'ProjectsService',
+            );
+          }
+        }
+      }
 
       // Fetch updated project with relations
       const updatedProject = await queryRunner.manager.findOne(Project, {
@@ -284,8 +336,9 @@ export class ProjectsService {
     await queryRunner.startTransaction();
 
     try {
-      // First, check if project exists
+      // First, check if project exists and get its images
       const project = await this.findOne(id);
+      const imagesToDelete = project.images || [];
 
       // Delete the project
       const deleteResult = await queryRunner.manager.delete(Project, id);
@@ -295,6 +348,21 @@ export class ProjectsService {
       }
 
       await queryRunner.commitTransaction();
+
+      // Delete all project images from Cloudflare R2 after successful DB deletion
+      if (imagesToDelete.length > 0) {
+        for (const imageUrl of imagesToDelete) {
+          try {
+            await this.supabaseService.deleteImage(imageUrl);
+            SafeLogger.log(`Deleted image: ${imageUrl}`, 'ProjectsService');
+          } catch (cleanupError) {
+            SafeLogger.error(
+              `Failed to delete image: ${imageUrl} - ${cleanupError.message}`,
+              'ProjectsService',
+            );
+          }
+        }
+      }
 
       SafeLogger.log(`Project deleted successfully: ${id}`, 'ProjectsService');
       return {

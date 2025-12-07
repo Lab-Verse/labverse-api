@@ -1,5 +1,6 @@
 import { IsString, IsOptional, IsBoolean, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 export class CreateBlogPostDto {
   @ApiProperty({
@@ -30,6 +31,12 @@ export class CreateBlogPostDto {
   })
   @IsOptional()
   @IsUUID()
+  @Transform(({ value }) => {
+    if (typeof value === 'string' && value.trim() === '') {
+      return undefined;
+    }
+    return value;
+  })
   authorId?: string;
 
   @ApiPropertyOptional({
@@ -38,6 +45,12 @@ export class CreateBlogPostDto {
   })
   @IsOptional()
   @IsUUID()
+  @Transform(({ value }) => {
+    if (typeof value === 'string' && value.trim() === '') {
+      return undefined;
+    }
+    return value;
+  })
   categoryId?: string;
 
   @ApiPropertyOptional({
@@ -54,5 +67,11 @@ export class CreateBlogPostDto {
   })
   @IsOptional()
   @IsBoolean()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value === 'true' || value === '1';
+    }
+    return value;
+  })
   isPublished?: boolean;
 }

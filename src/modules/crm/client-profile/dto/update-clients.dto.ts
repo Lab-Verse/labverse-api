@@ -11,7 +11,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 export class UpdateClientDto extends PartialType(CreateClientDto) {
   @ApiPropertyOptional({
     description: "The URL of the client's profile photo",
-    example: 'https://supabase-bucket.com/client-profiles/image.png',
+    example: 'https://labverse.org/client-profiles/image.png',
   })
   @IsOptional()
   @IsString()

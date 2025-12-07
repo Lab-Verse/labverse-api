@@ -96,7 +96,7 @@ export class CreateProjectDto {
   @ApiPropertyOptional({
     description: 'Array of image URLs for the project',
     example: [
-      'https://fvatmbbtvtixwnnmfbuh.supabase.co/storage/v1/object/public/Labverse/projects/image1.png',
+      'https://labverse.org/projects/image1.png',
     ],
     type: [String],
   })

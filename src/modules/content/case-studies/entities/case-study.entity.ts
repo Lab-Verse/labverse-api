@@ -38,6 +38,9 @@ export class CaseStudy {
   @Column({ name: 'thumbnail_url', nullable: true })
   thumbnailUrl: string;
 
+  @Column({ name: 'project_images', type: 'text', array: true, nullable: true })
+  projectImages: string[];
+
   @Column({ name: 'category_id', type: 'uuid', nullable: true })
   categoryId: string;
 

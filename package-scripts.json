@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "test:routes": "ts-node scripts/test-routes.ts",
+    "test:routes:dev": "npm run start:dev & sleep 5 && npm run test:routes"
+  }
+}

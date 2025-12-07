@@ -1,5 +1,6 @@
-import { IsString, IsOptional, IsBoolean, IsUUID } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsUUID, IsArray } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 export class CreateCaseStudyDto {
   @ApiProperty({
@@ -66,11 +67,27 @@ export class CreateCaseStudyDto {
   thumbnailUrl?: string;
 
   @ApiPropertyOptional({
+    description: 'Array of project image URLs',
+    example: ['https://example.com/image1.jpg', 'https://example.com/image2.jpg'],
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  projectImages?: string[];
+
+  @ApiPropertyOptional({
     description: 'Category ID of the case study (UUID v4)',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @IsOptional()
   @IsUUID()
+  @Transform(({ value }) => {
+    if (typeof value === 'string' && value.trim() === '') {
+      return undefined;
+    }
+    return value;
+  })
   categoryId?: string;
 
   @ApiPropertyOptional({
@@ -79,5 +96,11 @@ export class CreateCaseStudyDto {
   })
   @IsOptional()
   @IsBoolean()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value === 'true' || value === '1';
+    }
+    return value;
+  })
   isPublished?: boolean;
 }

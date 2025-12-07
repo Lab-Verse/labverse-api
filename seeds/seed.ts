@@ -6,8 +6,9 @@ import * as bcrypt from 'bcryptjs';
 import { RoleEnum } from '../src/modules/roles/role.enum';
 import { SecurityUtil } from '../src/common/utils/security.util';
 
-// Import the permissions seeding function
+// Import the seeding functions
 import { seedPermissions } from './permissions-seed';
+import { seedCaseStudies } from './case-studies-seed';
 
 async function seed() {
   await AppDataSource.initialize(); // Initialize connection once
@@ -72,6 +73,9 @@ async function seed() {
 
     // Now, run the permissions seed function, which will use the existing connection
     await seedPermissions();
+    
+    // Seed case studies
+    await seedCaseStudies();
 
     console.log('✅ All seeding tasks completed successfully!');
   } catch (e) {

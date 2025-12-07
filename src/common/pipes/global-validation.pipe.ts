@@ -14,7 +14,7 @@ export class GlobalValidationPipe extends ValidationPipe {
       forbidNonWhitelisted: true,
       transform: true,
       transformOptions: {
-        enableImplicitConversion: false,
+        enableImplicitConversion: true,
       },
       validateCustomDecorators: true,
 

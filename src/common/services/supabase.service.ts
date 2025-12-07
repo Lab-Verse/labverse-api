@@ -3,32 +3,22 @@ import {
   InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { ConfigService } from '@nestjs/config';
 import { SafeLogger } from 'src/common/utils/logger.util';
+import { FileUploadService } from './file-upload.service';
 
 @Injectable()
 export class SupabaseService {
-  private supabase: SupabaseClient;
-  private bucketName: string;
-
-  constructor(private configService: ConfigService) {
-    this.supabase = createClient(
-      this.configService.get<string>('SUPABASE_URL'),
-      this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY') ||
-        this.configService.get<string>('SUPABASE_ANON_KEY'),
-    );
-    this.bucketName = this.configService.get<string>('SUPABASE_BUCKET_NAME');
-  }
+  constructor(
+    private configService: ConfigService,
+    private fileUploadService: FileUploadService,
+  ) {}
 
   async uploadImage(
     file: Express.Multer.File,
     folderName: string,
   ): Promise<string> {
     try {
-      // Test connection first
-      await this.testConnection();
-
       // Validate file exists
       if (!file) {
         throw new BadRequestException('No file provided');
@@ -54,46 +44,14 @@ export class SupabaseService {
         );
       }
 
-      // Generate unique filename
-      const fileExtension = file.originalname.split('.').pop();
-      const fileName = `${folderName}/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExtension}`;
-
-      // Upload the file to the bucket
-      const { error } = await this.supabase.storage
-        .from(this.bucketName)
-        .upload(fileName, file.buffer, {
-          cacheControl: '3600',
-          upsert: false,
-          contentType: file.mimetype,
-        });
-
-      if (error) {
-        SafeLogger.error(
-          `Supabase upload error details: ${JSON.stringify(error)}`,
-          'SupabaseService',
-        );
-        SafeLogger.error(
-          `Bucket: ${this.bucketName}, FileName: ${fileName}`,
-          'SupabaseService',
-        );
-        SafeLogger.error(
-          `Supabase URL: ${this.configService.get<string>('SUPABASE_URL')}`,
-          'SupabaseService',
-        );
-        throw new InternalServerErrorException(
-          `Failed to upload image to Supabase: ${error.message || 'Unknown error'}`,
-        );
-      }
-
-      const { data: publicUrlData } = this.supabase.storage
-        .from(this.bucketName)
-        .getPublicUrl(fileName);
-
+      // Upload using Cloudflare R2
+      const imageUrl = await this.fileUploadService.uploadSingleFile(file, folderName);
+      
       SafeLogger.log(
-        `Image uploaded successfully to: ${publicUrlData.publicUrl}`,
+        `Image uploaded successfully to: ${imageUrl}`,
         'SupabaseService',
       );
-      return publicUrlData.publicUrl;
+      return imageUrl;
     } catch (error) {
       SafeLogger.error(
         `Image upload failed: ${error.message}`,
@@ -109,7 +67,7 @@ export class SupabaseService {
   }
 
   /**
-   * Delete image from Supabase storage
+   * Delete image from Cloudflare R2 storage
    */
   async deleteImage(imageUrl: string): Promise<void> {
     try {
@@ -117,26 +75,10 @@ export class SupabaseService {
         throw new BadRequestException('Image URL is required');
       }
 
-      // Extract file path from URL
-      const urlParts = imageUrl.split('/');
-      const fileName = urlParts.slice(-2).join('/'); // Get folder/filename
-
-      const { error } = await this.supabase.storage
-        .from(this.bucketName)
-        .remove([fileName]);
-
-      if (error) {
-        SafeLogger.error(
-          `Failed to delete image: ${error.message}`,
-          'SupabaseService',
-        );
-        throw new InternalServerErrorException(
-          'Failed to delete image from storage',
-        );
-      }
-
+      await this.fileUploadService.deleteFile(imageUrl);
+      
       SafeLogger.log(
-        `Image deleted successfully: ${fileName}`,
+        `Image deleted successfully: ${imageUrl}`,
         'SupabaseService',
       );
     } catch (error) {
@@ -155,18 +97,10 @@ export class SupabaseService {
 
   async testConnection(): Promise<void> {
     try {
-      const { data, error } = await this.supabase.storage.listBuckets();
-      if (error) {
-        SafeLogger.error(
-          `Supabase connection test failed: ${error.message}`,
-          'SupabaseService',
-        );
-      } else {
-        SafeLogger.log(
-          `Available buckets: ${data.map((b) => b.name).join(', ')}`,
-          'SupabaseService',
-        );
-      }
+      SafeLogger.log(
+        `Using Cloudflare R2 storage with bucket: ${this.configService.get<string>('CLOUDFLARE_BUCKET_NAME')}`,
+        'SupabaseService',
+      );
     } catch (error) {
       SafeLogger.error(
         `Connection test error: ${error.message}`,

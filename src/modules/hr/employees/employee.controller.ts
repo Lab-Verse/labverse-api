@@ -91,16 +91,36 @@ export class EmployeeProfilesController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Update a specific employee profile' })
+  @ApiOperation({ summary: 'Update a specific employee profile with optional image' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: { type: 'string', format: 'uuid' },
+        hireDate: { type: 'string', format: 'date' },
+        jobTitle: { type: 'string' },
+        department: { type: 'string' },
+        status: {
+          type: 'string',
+          enum: ['active', 'inactive', 'on_leave', 'terminated'],
+        },
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
   @Roles(RoleEnum.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
   update(
     @Param('id', UuidValidationPipe) id: string,
     @Body() updateEmployeeProfileDto: UpdateEmployeeProfileDto,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
     const validId = SecurityUtil.validateId(id);
     return this.employeeProfilesService.update(
       validId,
       updateEmployeeProfileDto,
+      file,
     );
   }
 
