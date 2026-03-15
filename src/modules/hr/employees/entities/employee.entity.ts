@@ -15,7 +15,7 @@ import { EmployeeStatus } from '../dto/employee-status.enum';
 // import { TaskComment } from '../../../project-management/tasks/entities/task-comment.entity';
 // import { TimeEntry } from '../../../project-management/time-entries/entities/time-entry.entity';
 // import { ProjectUpdate } from '../../../project-management/project-updates/entities/project-update.entity';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 @Entity({ name: 'employee_profiles' })
 export class EmployeeProfile {
   @PrimaryGeneratedColumn('uuid')
@@ -54,6 +54,6 @@ export class EmployeeProfile {
 
   @BeforeInsert()
   generateEmployeeCode() {
-    this.employeeCode = `EMP-${uuidv4()}`;
+    this.employeeCode = `EMP-${randomUUID()}`;
   }
 }

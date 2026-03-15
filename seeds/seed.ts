@@ -9,6 +9,7 @@ import { SecurityUtil } from '../src/common/utils/security.util';
 // Import the seeding functions
 import { seedPermissions } from './permissions-seed';
 import { seedCaseStudies } from './case-studies-seed';
+import { seedBlogPosts } from './blog-posts-seed';
 
 async function seed() {
   await AppDataSource.initialize(); // Initialize connection once
@@ -76,6 +77,9 @@ async function seed() {
     
     // Seed case studies
     await seedCaseStudies();
+
+    // Seed blog posts
+    await seedBlogPosts();
 
     console.log('✅ All seeding tasks completed successfully!');
   } catch (e) {
